@@ -1,0 +1,51 @@
+name: release-to-prod
+on:
+  workflow_dispatch:
+    inputs:
+      release_run_number:
+        description: 'run_number of the tested release-to-test run'
+        required: true
+      change_record:
+        description: 'CAB change record, for example CHG0012345'
+        required: true
+concurrency: release-prod
+jobs:
+  deploy-prod:
+    runs-on: windows-latest
+    environment: Production
+    strategy:
+      max-parallel: 1
+      matrix:
+        solution: [ContosoSharedCore, ContosoProjectA, ContosoProjectB]
+    steps:
+      - name: Download tested artefacts
+        uses: actions/download-artifact@v4
+        with:
+          name: managed-solutions-${{ inputs.release_run_number }}
+          run-id: ${{ vars.LAST_TEST_RUN_ID }}
+          github-token: ${{ github.token }}
+      - uses: microsoft/powerplatform-actions/actions-install@v1
+      - name: Import ${{ matrix.solution }} to Production
+        uses: microsoft/powerplatform-actions/import-solution@v1
+        with:
+          environment-url: ${{ vars.ENV_URL }}
+          app-id: ${{ secrets.PP_APP_ID }}
+          client-secret: ${{ secrets.PP_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.PP_TENANT_ID }}
+          solution-file: out/${{ matrix.solution }}_managed.zip
+          use-deployment-settings-file: true
+          deployment-settings-file: >-
+            deployment-settings/settings-prod.json
+          stage-and-upgrade: true
+          activate-plugins: true
+          run-asynchronously: true
+  record:
+    needs: deploy-prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write release evidence to the job summary
+        run: |
+          echo "Change: ${{ inputs.change_record }}" \
+            >> $GITHUB_STEP_SUMMARY
+          echo "Artefacts: run ${{ inputs.release_run_number }}" \
+            >> $GITHUB_STEP_SUMMARY

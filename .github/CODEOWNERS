@@ -1,0 +1,16 @@
+# Default: platform admins review anything not matched below
+*                                  @ontoso/platform-admins
+ 
+# SharedCore: owner plus platform admins
+/src/solutions/ContosoSharedCore/  @dev1 @contoso/platform-admins
+ 
+# Project A: both makers plus the project lead
+/src/solutions/ContosoProjectA/    @dev2 @dev3 @contoso/projectA-lead
+ 
+# Project B: maker plus the project lead
+/src/solutions/ContosoProjectB/    @dev4 @contoso/projectB-lead
+ 
+# Pipelines, settings and gates are platform-owned
+/.github/                          @contoso/platform-admins
+/deployment-settings/              @contoso/platform-admins
+/scripts/                          @contoso/platform-admins
