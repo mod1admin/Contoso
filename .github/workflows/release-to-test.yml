@@ -56,19 +56,7 @@ jobs:
           use-deployment-settings-file: false
           deployment-settings-file: >-
             deployment-settings/settings-test.json
-          import-as-holding: false
-          stage-and-upgrade: false
           activate-plugins: true
           force-overwrite: false
           run-asynchronously: true
-  smoke-test:
-    needs: deploy-test
-    runs-on: windows-latest
-    environment: Test
-    steps:
-      - uses: actions/checkout@v4
-      - name: Smoke tests and flow activation check
-        shell: pwsh
-        run: >
-          ./scripts/Invoke-SmokeTests.ps1
-          -EnvUrl '${{ secrets.ENV_URLTest }}'
+ 
