@@ -56,8 +56,10 @@ jobs:
           use-deployment-settings-file: false
           deployment-settings-file: >-
             deployment-settings/settings-test.json
-          stage-and-upgrade: true
+          import-as-holding: false
+          stage-and-upgrade: false
           activate-plugins: true
+          force-overwrite: false
           run-asynchronously: true
   smoke-test:
     needs: deploy-test
