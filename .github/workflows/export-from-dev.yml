@@ -40,6 +40,18 @@ jobs:
           solution-name: ${{ inputs.solution_name }}
           solution-output-file: out/${{ inputs.solution_name }}.zip
           managed: false
+      - name: Export managed solution
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ inputs.dev_env_url }}
+          app-id: ${{ secrets.PP_APP_ID }}
+          client-secret: ${{ secrets.PP_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.PP_TENANT_ID }}
+          solution-name: ${{ inputs.solution_name }}
+          solution-output-file: out/${{ inputs.solution_name }}_managed.zip
+          managed: true
+          overwrite: true
+          run-asynchronously: true
       - name: Unpack to source folder
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
