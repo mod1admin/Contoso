@@ -51,7 +51,13 @@ jobs:
           solution-output-file: out/${{ inputs.solution_name }}_managed.zip
           managed: true
           overwrite: true
-          run-asynchronously: true
+      - name: Upload managed solution artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.solution_name }}-managed-${{ github.run_number }}
+          path: out/${{ inputs.solution_name }}_managed.zip
+          if-no-files-found: error
+          retention-days: 30                    
       - name: Unpack to source folder
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
