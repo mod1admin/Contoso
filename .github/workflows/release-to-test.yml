@@ -16,28 +16,15 @@ jobs:
       - name: Stamp build number into Solution.xml
         shell: pwsh
         run: |
-          foreach ($s in 'ContosoSharedCore','ContosoProjectA',
-                         'ContosoProjectB') {
+          foreach ($s in 'ContosoProjectA') {
             ./scripts/Set-SolutionVersion.ps1 -Solution $s `
               -Build $env:VERSION_SUFFIX
           }
-      - name: Pack SharedCore
-        uses: microsoft/powerplatform-actions/pack-solution@v1
-        with:
-          solution-folder: src/solutions/ContosoSharedCore
-          solution-file: out/ContosoSharedCore_managed.zip
-          solution-type: Managed
       - name: Pack Project A
         uses: microsoft/powerplatform-actions/pack-solution@v1
         with:
           solution-folder: src/solutions/ContosoProjectA
           solution-file: out/ContosoProjectA_managed.zip
-          solution-type: Managed
-      - name: Pack Project B
-        uses: microsoft/powerplatform-actions/pack-solution@v1
-        with:
-          solution-folder: src/solutions/ContosoProjectB
-          solution-file: out/ContosoProjectB_managed.zip
           solution-type: Managed
       - uses: actions/upload-artifact@v4
         with:
@@ -52,7 +39,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        solution: [ContosoSharedCore, ContosoProjectA, ContosoProjectB]
+        solution: [ContosoProjectA]
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -61,7 +48,7 @@ jobs:
       - name: Import ${{ matrix.solution }} (stage and upgrade)
         uses: microsoft/powerplatform-actions/import-solution@v1
         with:
-          environment-url: ${{ vars.ENV_URL }}
+          environment-url: ${{ secrets.ENV_URL }}
           app-id: ${{ secrets.PP_APP_ID }}
           client-secret: ${{ secrets.PP_CLIENT_SECRET }}
           tenant-id: ${{ secrets.PP_TENANT_ID }}
@@ -82,4 +69,4 @@ jobs:
         shell: pwsh
         run: >
           ./scripts/Invoke-SmokeTests.ps1
-          -EnvUrl '${{ vars.ENV_URL }}'
+          -EnvUrl '${{ secrets.ENV_URL }}'
