@@ -58,12 +58,21 @@ jobs:
           path: out/${{ inputs.solution_name }}_managed.zip
           if-no-files-found: error
           retention-days: 30                    
-      - name: Unpack to source folder
+      - name: Prepare solution source folder
+        shell: pwsh
+        run: |
+          $folder = "src/solutions/${{ inputs.solution_name }}"
+
+          if (Test-Path $folder) {
+            Remove-Item $folder -Recurse -Force
+          }
+          New-Item -ItemType Directory -Path $folder -Force | Out-Null
+      - name: Unpack managed and unmanaged source
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
           solution-file: out/${{ inputs.solution_name }}.zip
           solution-folder: src/solutions/${{ inputs.solution_name }}
-          solution-type: Unmanaged
+          solution-type: Both
           overwrite-files: true
       - name: Commit to feature branch and open draft PR
         shell: pwsh
