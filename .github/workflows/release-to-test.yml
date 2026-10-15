@@ -53,7 +53,7 @@ jobs:
           client-secret: ${{ secrets.PP_CLIENT_SECRET }}
           tenant-id: ${{ secrets.PP_TENANT_ID }}
           solution-file: out/${{ matrix.solution }}_managed.zip
-          use-deployment-settings-file: true
+          use-deployment-settings-file: false
           deployment-settings-file: >-
             deployment-settings/settings-test.json
           stage-and-upgrade: true
