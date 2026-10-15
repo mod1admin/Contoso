@@ -69,4 +69,4 @@ jobs:
         shell: pwsh
         run: >
           ./scripts/Invoke-SmokeTests.ps1
-          -EnvUrl '${{ secrets.ENV_URL }}'
+          -EnvUrl '${{ secrets.ENV_URLTest }}'
